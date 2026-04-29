@@ -1,0 +1,11 @@
+[package]
+name = "sanity_crt"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+qmnf_crtbigint = { path = "../ns_v5/qmnf_crtbigint" }
+
+[[bin]]
+name = "sanity"
+path = "src/bin/sanity.rs"

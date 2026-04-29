@@ -1,0 +1,74 @@
+# Cargo build artifacts — never commit
+target/
+**/target/
+Cargo.lock.bak
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~
+
+# Rust intermediate / generated artifacts
+*.rlib
+*.rmeta
+*.timestamp
+*.fingerprint
+*.d
+
+# Compiled binaries / test executables
+*.exe
+test_*[!.rs]
+!test_*.rs
+fhe_empirical_evidence_collector
+quick_benchmark
+
+# Manual snapshot / backup file patterns (lessons from QMNF_System)
+*.bak
+*.bak.v*
+*-Copy*.*
+* (1).*
+* (2).*
+* (3).*
+
+# Generated reports / audit outputs
+*_violations*.json
+*_audit*.json
+py_float_violations*.json
+rust_float_violations*.json
+COMPREHENSIVE_AUDIT_REPORT.json
+MODULE_METRICS.json
+AUDIT_SUMMARY.json
+
+# Generated text dumps
+*_SUMMARY.txt
+*_REPORT.txt
+test_execution_output*.txt
+ANALYSIS_COMPLETION_SUMMARY.txt
+
+# Node tooling (in case of mixed Rust+TS work)
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Lean / Lake
+.lake/
+build/
+lakefile.olean
+*.olean
+
+# Local environment
+.env
+.env.local
+*.log

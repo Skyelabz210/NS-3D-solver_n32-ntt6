@@ -1,0 +1,52 @@
+[package]
+name = "d024_probe"
+version = "0.1.0"
+edition = "2021"
+description = "D-024 probe: K_b symmetry test and b-component attractor test for NS in F_p²"
+
+[dependencies]
+nsgrid3d = { path = "../nsgrid3d" }
+quantum_continuum_torus = { path = "../quantum_continuum_torus" }
+qmnf_primitives = { path = "../qmnf_primitives" }
+qmnf_crtbigint = { path = "../ns_v5/qmnf_crtbigint" }
+ns_regularity = { path = "../ns_v5" }
+
+[[bin]]
+name = "d024_probe"
+path = "src/main.rs"
+
+[[bin]]
+name = "d024_attractor"
+path = "src/bin/attractor.rs"
+
+[[bin]]
+name = "d024_attractor_crt"
+path = "src/bin/attractor_crt.rs"
+
+[[bin]]
+name = "d024_jacobian"
+path = "src/bin/jacobian.rs"
+
+[[bin]]
+name = "d024_wassan_attractor"
+path = "src/bin/wassan_attractor.rs"
+
+[[bin]]
+name = "d024_crt_attractor"
+path = "src/bin/crt_attractor.rs"
+
+[[bin]]
+name = "d024_kill_tests"
+path = "src/bin/kill_tests.rs"
+
+[[bin]]
+name = "d024_canonical_p9"
+path = "src/bin/canonical_p9.rs"
+
+[[bin]]
+name = "d024_wassan_p10"
+path = "src/bin/wassan_p10.rs"
+
+[[bin]]
+name = "corridor_probe_v3"
+path = "src/bin/corridor_probe_v3.rs"

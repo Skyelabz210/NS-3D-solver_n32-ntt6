@@ -1,0 +1,9 @@
+[package]
+name = "prime_hunt"
+version = "0.1.0"
+edition = "2021"
+description = "QMNF Dresden Prime Manifold - Coprimality-First Prime Hunter"
+
+[profile.release]
+opt-level = 3
+lto = true

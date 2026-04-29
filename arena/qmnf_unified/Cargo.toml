@@ -1,0 +1,36 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/asve_engine",
+    "crates/cdhs_telemetry",
+    "crates/cram_explorer",
+    "crates/hackfate_runtime",
+    "crates/hdv_crt",
+    "crates/hydra_v3",
+    "crates/k_elim_period",
+    "crates/landau_siegel_chimera",
+    "crates/loki_engine",
+    "crates/maa_dh",
+    "crates/mmbf_grover_bridge",
+    "crates/ns_winding_v2",
+    "crates/nsgrid3d",
+    "crates/plmg_validator",
+    "crates/prime_hunt",
+    "crates/qedde_v2",
+    "crates/qedde_v3",
+    "crates/qmnf_primitives",
+    "crates/quantum_continuum_torus",
+    "crates/ramanujan_memory_lane",
+    "crates/svd_engine",
+    "crates/time_crystal",
+    "crates/wassan_engine",
+    "crates/wassan_holographic",
+    "crates/ns_v5",
+    "crates/ns_v5/qmnf_crtbigint",
+    "crates/qcid_ns_bridge",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Acid"]

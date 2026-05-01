@@ -1,153 +1,202 @@
-# NS 3D N32 NTT6
+# ns3d-n32-ntt6
 
-This repo bundles **two related-but-distinct systems** with shared genealogy.
-Snapshot taken at the **P5B-9A gate-pass** state, 2026-04-29.
+Private research repository for two related systems with shared genealogy:
 
-## What this is — two systems, one repo
+1. the mother-prime and CRAM substrate line
+2. the exact-integer Navier-Stokes line built from that substrate
 
-The NS solver in this repo did not start as an NS solver. It grew out of
-the **mother prime sieve** being pointed at fluid behavior in
-Navier-Stokes — when new readings emerged, a solver was built around them.
-The two systems share a structural skeleton because of that lineage; they
-are not duplicates.
+This is not a single-purpose solver repo. It is a living workspace where the
+substrate, the stress-test application, and the bridging storage/runtime layers
+coexist because they were built out of the same line of work.
 
-### System 1 — Mother Prime Sieve
+GitHub remote: `https://github.com/Skyelabz210/ns3d-n32-ntt6`
 
-The original sieve framework. Lives under `arena/qmnf_unified/` (and the
-top-level `arena/prime_hunt/` mirror). This is the discovery tool: point
-it at a problem, let structure emerge.
+## Orientation
 
-Includes:
-- The full sieve crate set (qmnf_primitives, prime_hunt, hydra_v3,
-  landau_siegel_chimera, mmbf_grover_bridge, quantum_continuum_torus,
-  ramanujan_memory_lane, time_crystal, …)
-- `docs/atlas/`, `docs/cram_definitive/`, `docs/wave3/` — the
-  framework-underneath documentation (CRAM operator skill v2,
-  Algebraic Measurement Framework, theorem stacks)
-- `lean/` — Lean formalization seeds
-- `python/` — research Python (resnet ablations, yukawa schema,
-  hydra investigations, separation theorems)
-- `skills/cram-operator-skill/`, `skills/prime-family-spacetime/` —
-  Claude Code skill bundles
-- `tools/python/` — sieve and analysis utilities
+- `arena/` is the active Cargo workspace.
+- `arena/crates/` is the active solver-side and runtime-side crate set.
+- `arena/qmnf_unified/` is the sieve-side and research-side companion tree.
+- `imports/` is incoming source material and should be treated as deliberate
+  integration input, not build output.
+- Root docs such as `P5B_DAG_P5B9A_GATE.md`,
+  `PROPOSAL_P5B9A_EXECUTION.md`, and `CONSOLIDATED_WORK_LOG.md` record the
+  current state of the line.
 
-### System 2 — NS 3D N32 NTT6 Solver
+For a fuller map, see `WORKSPACE_MANIFEST.md`.
 
-The Navier-Stokes solver that developed after the sieve was pointed at NS
-fluid. Lives under `arena/crates/`. Uses exact-integer arithmetic and a
-6-prime NTT spectral representation.
+## What lives here
 
-Includes:
-- `asve_engine`, `cdhs_telemetry` — runtime + telemetry
-- `cram_explorer` (local crate, distinct from the cram-explorer skill in
-  `~/.claude/skills/`) — apollonian, holodrive, k_elim, projector,
-  shadow_ladder, torus
-- `d024_probe` — attractor and corridor probes (D-024 work)
-- `nsgrid3d` — the actual N=32 grid solver (biot_savart_ntt, fused_solver,
-  regularity_tracker, …)
-- `ns_v5` — NS regularity engine (claim registry, status matrix, kill
-  ledger)
-- `ns_winding_v2` — 2D NS exact-energy + lifted winding
-- `qcid_ns_bridge` — Fp² dual-track NS bridge
-- `qedde_v2`, `qedde_v3` — Q-Eddington diophantine
-- `wassan_engine`, `wassan_holographic` — WASSAN HD
-- `maa_dh` — AHOP / Apollonian Double Helix
+### 1. Prime-substrate and CRAM line
 
-The gate test that this snapshot passes is solver-side:
+This side of the repo includes the mother-prime sieve, QMNF/CRAM substrate,
+operator families, chimera systems, Grover-on-classical-torus work, storage
+and runtime layers, and related theorem stacks and formalization seeds.
 
-- `per_prime_spectral_residues_crt_consistent` — confirms 6-prime spectral
-  computation gives CRT-consistent results across all `N³ = 32,768` cells
-  for the Taylor-Green amp=100 test.
-- 58/58 tests passing as of the gate.
+Representative crates and trees:
 
-### Why both live in this repo
+- `arena/crates/qmnf_primitives`
+- `arena/crates/prime_hunt`
+- `arena/crates/hydra_v3`
+- `arena/crates/landau_siegel_chimera`
+- `arena/crates/qcid_ns_bridge`
+- `arena/crates/qedde_v2`
+- `arena/crates/qedde_v3`
+- `arena/qmnf_unified/docs`
+- `arena/qmnf_unified/lean`
+- `arena/qmnf_unified/python`
 
-Genealogical: the solver inherited the sieve's skeleton because the solver
-was built *out of* the sieve's readings. Splitting them into separate
-repos would erase the lineage. Apparent duplicates (e.g.,
-`arena/crates/qmnf_primitives/` vs `arena/qmnf_unified/crates/qmnf_primitives/`)
-are NOT duplicates — they are the sieve-side and solver-side instances of
-shared substrate code, evolved along their own paths.
+### 2. NS exact-integer line
 
-## Layout
+This side of the repo contains the active Navier-Stokes workspaces and support
+crates built on exact modular arithmetic, CRT, K-Elimination, and NTT-based
+representations.
 
-```
-.
-├── README.md
-├── .gitignore
-├── arena/
-│   ├── Cargo.toml
-│   ├── README.md
-│   ├── SESSION_*.md                    ← per-session notes (D024, PUSH7-10)
-│   ├── executioner_dag.md
-│   │
-│   ├── crates/                         ← System 2: NS Solver
-│   │   ├── asve_engine/
-│   │   ├── cdhs_telemetry/
-│   │   ├── cram_explorer/              ← local solver-side crate
-│   │   ├── d024_probe/
-│   │   ├── nsgrid3d/
-│   │   ├── ns_v5/
-│   │   ├── ns_winding_v2/
-│   │   ├── qcid_ns_bridge/
-│   │   ├── qedde_v2/, qedde_v3/
-│   │   ├── wassan_engine/, wassan_holographic/
-│   │   └── ... (~25 crates)
-│   │
-│   ├── qmnf_unified/                   ← System 1: Mother Prime Sieve
-│   │   ├── crates/                     ← sieve-side instances of the substrate
-│   │   ├── docs/atlas/                 ← CRAM operator skill, dangerous configs
-│   │   ├── docs/cram_definitive/       ← Algebraic Measurement Framework, atlas
-│   │   ├── docs/wave3/                 ← theorem stacks, blueprints
-│   │   ├── lean/                       ← Lean formalization seeds
-│   │   ├── python/                     ← resnet, yukawa, hydra, separation
-│   │   ├── skills/                     ← Claude Code skill bundles
-│   │   └── tools/python/               ← sieve + analysis utilities
-│   │
-│   └── prime_hunt/                     ← top-level mirror of sieve crate
-│
-├── ns3d_n32_ntt6_P5B9A_prereqs.rs      ← P5B-9A path prerequisites
-├── P5B_DAG_P5B9A_GATE.md               ← master DAG (corrected architecture)
-└── PROPOSAL_P5B9A_EXECUTION.md         ← next-step proposal
-```
+Representative crates:
 
-## Build / test
+- `arena/crates/ns_v5`
+- `arena/crates/nsgrid3d`
+- `arena/crates/d024_probe`
+- `arena/crates/ns_winding_v2`
+- `arena/crates/plmg_validator`
+- `arena/crates/asve_engine`
+- `arena/crates/cdhs_telemetry`
 
-From the workspace directory:
+Current active import lineage matters here: the `u128`/`v4` path in
+`imports/` and `arena/crates/ns_v5/src/ns3d_n32_crt_v4.rs` is part of the
+live engineering line.
 
-```sh
-cd arena
+## Wasan HD
+
+Human-facing spelling in this repo is **Wasan**, as in sacred mathematics.
+Current crate names still use the established internal identifiers
+`wassan_holographic` and `wassan_engine`.
+
+The Wasan line has two connected layers:
+
+- `arena/crates/wassan_holographic`
+  - exact NTT hologram construction, sector-domain storage, syndrome checks,
+    self-correction, and phase-locked retrieval scoring
+- `arena/crates/wassan_engine`
+  - basin-oriented storage and retrieval wrapper built on top of the
+    holographic layer
+
+There is also a distinct NS persistence bridge in:
+
+- `arena/crates/ns_v5/src/wassan.rs`
+- `arena/crates/ns_v5/src/ns3d_wassan.rs`
+
+That layer uses Wasan to persist full recumbent structure for NS cells rather
+than flattening everything into ephemeral integers.
+
+## Wasan mechanics
+
+The current holographic mechanics are concrete and inspectable in code:
+
+- `NUM_DATA_BANDS = 144`
+- `NTT_SIZE = 256`
+- `NUM_PARITY_BANDS = 112`
+- `MAX_CORRECTABLE_ERRORS = 56`
+- `BYTES_PER_COEFF = 3`
+- `HOLOGRAM_CAPACITY = 432` bytes per hologram
+
+Pipeline:
+
+1. ingest bytes into 144 coefficient bands
+2. zero-pad into a 256-slot polynomial
+3. run exact modular forward NTT lane-by-lane
+4. store 256 sector evaluations
+5. retrieve by sector-domain coherence or exact label lookup
+6. detect corruption by inverse-NTT parity inspection
+7. restore sectors from authoritative bands or project from sectors back into
+   the valid codeword subspace
+
+There are two different persistence ideas in play:
+
+- **holographic persistence**
+  - each sector depends on all encoded bands
+  - parity bands give a correction surface
+  - attractor-bank retrieval matches by coherence, not by linear scan of
+    decoded strings
+- **structural persistence**
+  - NS-side Wasan persists recumbent tier geometry, overflow history, and
+    exact lane structure
+  - `ns_step_wassan()` keeps the field inside a write/read trajectory instead
+    of discarding structure at each step
+
+## Novel functionality currently present
+
+The Wasan implementation here is not just "storage with a math theme". The
+novel functional surface currently visible in the repo is:
+
+- exact modular holographic encoding using multiple NTT-friendly CRT lanes
+- sector-domain storage where every sector depends on the whole encoded object
+- syndrome-based corruption detection without floating point
+- self-correction by re-encoding from authoritative bands or projecting
+  sectors back into valid parity space
+- phase-locked retrieval through coherence scoring
+- basin-based memory organization in `wassan_engine`
+- NS structural persistence via `WassanDrive` and `WassanVortField`
+- exact preservation of recumbent tier placement, overflow history, and
+  full-lane state across NS write/read cycles
+
+## Build and test
+
+Run Cargo commands from `arena/`.
+
+```powershell
+cd C:\Users\hackf\Projects\ns3d-n32-ntt6\arena
 cargo build --workspace
 cargo test --workspace
 ```
 
-The gate test specifically:
+Useful focused commands:
 
-```sh
-cargo test -p d024_probe per_prime_spectral_residues_crt_consistent
+```powershell
+cargo test -p ns_regularity cram_div_u128 --lib
+cargo test -p ns_regularity ns3d_n32_crt_v4 --lib
+cargo run -p d024_probe --bin v4_vs_i128_ref --release
+cargo test -p wassan_holographic --lib
+cargo test -p wassan_engine --lib
 ```
 
-## Architectural notes
+## Wasan benchmark path
 
-See `P5B_DAG_P5B9A_GATE.md` for the current corrected architecture. Key points:
+There was no dedicated benchmark harness for the Wasan crates before this pass.
+The repo now has a simple release-mode benchmark binary:
 
-- **4p spectral witness basis:** `{769, 929, 1153, 1217}` — Garner4
-  reconstruction of `raw_BS` inside `biot_savart_residue_native`.
-- **6p division/state basis:** `{769, 929, 1153, 1217, 1409, 1601}` plus
-  `{2³¹, 5⁹}` — K-Elim division quotients + ExtRes8 state representation.
-- **Hard precondition** (documented and tested as a guard): if `raw_BS`
-  exceeds `M_NTT_4 / 2 ≈ 5.01×10¹¹`, Garner4 aliases. The 6p basis does NOT
-  remove the precondition — it inherits it.
+```powershell
+cd C:\Users\hackf\Projects\ns3d-n32-ntt6\arena
+cargo run -p wassan_engine --bin wasan_bench --release
+```
 
-## Floating-point posture
+Optional knobs:
 
-Exact integer arithmetic only. No `f32`, `f64`, no `as f64`, no `floor()`,
-no `round()` in computation paths. Display-only conversions are tolerated.
+```powershell
+cargo run -p wassan_engine --bin wasan_bench --release -- --samples 120 --bank-size 96
+```
+
+The benchmark reports timings for:
+
+- hologram encode
+- decode
+- verified decode
+- syndrome checks
+- self-correction after deterministic sector corruption
+- basin store throughput
+- basin retrieval
+
+This gives you a repeatable local measurement path without adding an external
+benchmarking framework.
+
+## Ground rules
+
+- exact integer arithmetic only on computation paths
+- do not treat sieve-side and solver-side mirrors as trivial duplicates
+- do not treat `imports/` as disposable noise
+- use the workspace lineage and theorem lineage when consolidating docs
 
 ## Status
 
-P5B-9A gate: **PASS**. Next step in `PROPOSAL_P5B9A_EXECUTION.md`.
-
-## License
-
-Private. Not for redistribution.
+This repo is active and intentionally dirty. New documentation and benchmark
+work should be additive and should not rewrite unrelated solver changes in the
+working tree.

@@ -95,7 +95,7 @@ Division contracts unchanged. Canonical dies at ~step 21 as before.
 
 After P5B-9A:
 - NTT4/raw_BS corridor: not the limiting factor (replaced by NTT6)
-- NTT6/K-Elim corridor: M_NTT_6/2 ≈ 1.13×10^18 protects both spectral and division
+- Small-prime NTT6/K-Elim corridor: M_NTT_6/2 ≈ 1.13×10^18 protects moderate spectral values but not the Push 10 v4 TG amp=1000 step-15 regime (~1.3×10^20 state scale). For that regime, replace this proposal with a CRAM-safe widened construction: preserve 11 as shadow link and 2 as recumbent overflow, keep 13 as stable boundary and 19 as edge-of-chaos, then build composites/prime powers such as `3*5*7` or `7*p^k` with explicit roles. Higher/chaos-regime primes are allowed only behind a composite layer and must be identified by K-Elim on the winding number.
 - THIN margin warnings: gone
 - ABC assault: can run to step 30+ without spectral aliasing
 - The 4p spectral basis is retired as a hard precondition

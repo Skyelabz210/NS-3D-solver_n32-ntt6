@@ -688,8 +688,9 @@ pub mod ns3d_n32_crt;
 pub mod ns3d_n32_crt_v2;
 pub mod ns3d_n32_crt_v3;  // historical — superseded by ns3d_n32_crt_v4
 pub mod cram_div;
+pub mod cram_div_u128;
 pub mod ns3d_aubin_lions;
 pub mod ns3d_n32_ntt6;
 pub mod cram_div_ext;
-pub mod ns3d_n32_crt_v4;  // canonical K-Elim CRT solver (6-prime division, 2.25M× corridor)
+pub mod ns3d_n32_crt_v4;  // u128 substrate solver with widened 2^63 / 5^25 lanes
 pub mod assault_witness;

@@ -15,8 +15,16 @@
 //!   M_NTT_6 / 2                            ≈ 1.13 × 10^18
 //! ```
 //!
-//! This is 2.25 million× larger than the current limit. The BS wall is eliminated
-//! for all NS simulations at any physically meaningful amplitude.
+//! This is 2.25 million× larger than the current limit. It extends the BS wall
+//! for moderate trajectories, but it does not eliminate the wall in general.
+//! Push 10 v4 observed TG amp=1000 reaching state magnitude ~1.3e20 at step 15;
+//! that regime cannot be handled by treating arbitrary large primes as neutral
+//! capacity. Higher/chaos-regime primes may be used as probes only after a
+//! composite layer is built over them and K-Elim on the winding number identifies
+//! the resulting object. The CRAM-consistent widening path preserves the Safe
+//! Basis ontology: 11 as the shadow link, 2 as recumbent overflow, 13 as stable
+//! boundary, 19 as edge-of-chaos, plus composites such as 3*5*7 or 7*p^k where
+//! the prime-power role is explicit.
 //!
 //! ## Prime selection criteria
 //!

@@ -971,6 +971,7 @@ mod tests {
             clean_count, mixed_count, joint.len());
 
         // Now check (7, 11, 17) — external prime gear
+        // Current CRAM reading: safe-base gear through the 11 lock.
         let mut joint2: std::collections::HashMap<(i64,i64,i64), Vec<(i64,i64)>> = Default::default();
         for &(a, s) in &signs {
             joint2.entry((a%7, a%11, a%17)).or_default().push((a, s));
@@ -986,6 +987,7 @@ mod tests {
             clean2, mixed2, joint2.len());
 
         // (7, 11, 19) — Arrow-Lift's preferred external prime
+        // Current CRAM reading: 19 is edge-of-chaos, still locked through 11.
         let mut joint3: std::collections::HashMap<(i64,i64,i64), Vec<(i64,i64)>> = Default::default();
         for &(a, s) in &signs {
             joint3.entry((a%7, a%11, a%19)).or_default().push((a, s));
@@ -1562,16 +1564,18 @@ mod tests {
         println!("If centered_sign matches actual_sign 100%: phase-lock works,");
         println!("the sign IS readable from the bundle when |ip| < M/2.");
         println!("If errors exist where |ip| > M/2: signed_ip overflows the");
-        println!("safe basis range. Need a larger basis (extend to p=23, 29, 31...).");
+        println!("safe basis range. Need a larger layered basis built from");
+        println!("safe-base composites and prime powers, phase-locked through 11.");
     }
 
 
     #[test]
     fn cram_extended_basis_phase_lock() {
-        println!("EXTENDED BASIS PHASE-LOCK: enlarge M until |signed_ip| < M/2");
+        println!("LAYERED BASIS PHASE-LOCK: enlarge M until |signed_ip| < M/2");
         println!();
         println!("Largest |signed_ip| at amp=1000: ~10^13");
         println!("Need M > 2 * 10^13 = 2*10^13");
+        println!("Extension is by safe-base prime powers/composites, not flat new primes.");
         println!();
 
         // Find largest |ip| over amp range
@@ -1587,54 +1591,58 @@ mod tests {
         println!("Need M > {}", 2 * max_abs_ip);
         println!();
 
-        // Build extended basis until M exceeds threshold
-        let primes_extended: [u64; 16] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53];
-
-        // Find smallest k such that product of first k primes > 2*max_abs_ip
-        let mut m: u128 = 1;
-        let mut k = 0;
-        for (i, &p) in primes_extended.iter().enumerate() {
-            m *= p as u128;
-            if m > 2 * max_abs_ip as u128 { k = i + 1; break; }
-        }
-        let basis: Vec<u64> = primes_extended[..k].to_vec();
+        // Build one pairwise-coprime prime-power modulus per safe-base prime.
+        // This keeps the 19-stable base intact while adding capacity above it.
+        let basis: Vec<u64> = vec![32, 27, 25, 49, 121, 169, 289, 361];
         let m: i128 = basis.iter().map(|&p| p as i128).product();
-        println!("Extended basis: {:?}", basis);
-        println!("M = {} (k = {} primes)", m, k);
+        println!("Layered power basis: {:?}", basis);
+        println!("M = {} ({} pairwise-coprime moduli)", m, basis.len());
         println!("M / 2 = {}", m / 2);
         println!("Threshold safe? M > 2*max_ip = {}: {}", 2*max_abs_ip, m as i128 > 2 * max_abs_ip);
         println!();
 
         // Garner reconstruction
-        fn modinv_p(a: i128, p: i128) -> i128 {
-            let mut r = 1i128; let mut base = a.rem_euclid(p); let mut e = p - 2;
-            while e > 0 { if e&1==1 { r = (r*base).rem_euclid(p); } e>>=1; base = (base*base).rem_euclid(p); }
-            r
+        fn modinv_mod(a: i128, m: i128) -> i128 {
+            let mut old_r = m;
+            let mut r = a.rem_euclid(m);
+            let mut old_s = 0i128;
+            let mut s = 1i128;
+            while r != 0 {
+                let q = old_r / r;
+                let next_r = old_r - q * r;
+                old_r = r;
+                r = next_r;
+                let next_s = old_s - q * s;
+                old_s = s;
+                s = next_s;
+            }
+            assert_eq!(old_r, 1, "moduli must be pairwise coprime");
+            old_s.rem_euclid(m)
         }
 
-        fn garner_full(residues: &[i128], primes: &[u64]) -> i128 {
-            let n = primes.len();
+        fn garner_full(residues: &[i128], moduli: &[u64]) -> i128 {
+            let n = moduli.len();
             let mut v = vec![0i128; n];
-            v[0] = residues[0].rem_euclid(primes[0] as i128);
+            v[0] = residues[0].rem_euclid(moduli[0] as i128);
             for i in 1..n {
                 // Compute current partial reconstruction X_{i-1} = v[0] + v[1]*p[0] + ...
                 let mut x: i128 = 0;
                 let mut p_acc: i128 = 1;
                 for j in 0..i {
-                    x = (x + v[j] * p_acc) % primes[i] as i128;
-                    p_acc = (p_acc * primes[j] as i128) % primes[i] as i128;
+                    x = (x + v[j] * p_acc) % moduli[i] as i128;
+                    p_acc = (p_acc * moduli[j] as i128) % moduli[i] as i128;
                 }
-                let p_i = primes[i] as i128;
-                let target = residues[i].rem_euclid(p_i);
-                let p_acc_inv = modinv_p(p_acc, p_i);
-                v[i] = ((target - x).rem_euclid(p_i) * p_acc_inv).rem_euclid(p_i);
+                let m_i = moduli[i] as i128;
+                let target = residues[i].rem_euclid(m_i);
+                let p_acc_inv = modinv_mod(p_acc, m_i);
+                v[i] = ((target - x).rem_euclid(m_i) * p_acc_inv).rem_euclid(m_i);
             }
             // Reconstruct full integer
             let mut result: i128 = 0;
             let mut p_acc: i128 = 1;
             for i in 0..n {
                 result += v[i] * p_acc;
-                p_acc *= primes[i] as i128;
+                p_acc *= moduli[i] as i128;
             }
             result
         }
@@ -1645,7 +1653,7 @@ mod tests {
         let mut errors: Vec<(i64, i128, i128, i64, i64)> = vec![];
 
         for &(amp, ip) in &all_ips {
-            // Compute residues on extended basis
+            // Compute residues on the layered safe-base power basis.
             let residues: Vec<i128> = basis.iter().map(|&p| ip.rem_euclid(p as i128)).collect();
             let reconstructed = garner_full(&residues, &basis).rem_euclid(m);
             let centered = if reconstructed < half { reconstructed } else { reconstructed - m };
@@ -1703,12 +1711,13 @@ mod tests {
         println!();
         println!("Note: under CRT, only PAIRWISE COPRIME moduli give a faithful product.");
         println!("Prime powers of the same prime are NOT coprime, so we cant mix p and p^2.");
-        println!("Strategy: pick one power per prime, OR use composites that are pairwise coprime.");
+        println!("Strategy: pick one power per safe-base prime, OR use pairwise-coprime");
+        println!("composite carriers. 510510 = 2*3*5*7*11*13*17 is a good carrier.");
         println!();
 
-        // Strategy 1: ALL prime powers (one per prime), maximizing M
-        // Use largest available power: 32, 27, 25, 49, 121, 169, 17, 19
-        let powers_basis: Vec<u64> = vec![32, 27, 25, 49, 121, 169, 17, 19];
+        // Strategy 1: ALL prime powers (one per safe-base prime), maximizing M.
+        // Use one chosen power through the 19-stable base.
+        let powers_basis: Vec<u64> = vec![32, 27, 25, 49, 121, 169, 289, 361];
         let m_powers: i128 = powers_basis.iter().map(|&p| p as i128).product();
         println!("Power basis: {:?}", powers_basis);
         println!("M_powers = {} (vs original 9,699,690 — gain {}x)",
@@ -1718,14 +1727,18 @@ mod tests {
         // Strategy 2: composites — these are PAIRWISE COPRIME pieces
         // Pick {32, 27, 25, 7, 11, 13, 17, 19} — same prime-decomposition product
         // OR add NEW pairwise-coprime composites: 6, 35, 143... but these reuse primes already in safe basis.
-        // Genuine extension: append a NEW prime: 23, 29, 31...
+        // Layer extension: grow safe-base composites and prime powers.
         // OR: replace primes with their composites.
+        // Current CRAM rule: larger carriers are synthesized from the safe
+        // base via pairwise-coprime composites and prime powers. 510510 is
+        // the good safe-base composite 2*3*5*7*11*13*17.
 
         // Strategy 3: full prime-power tower up to overflow
-        let extended: Vec<u64> = vec![64, 81, 125, 343, 1331, 2197, 17, 19, 23, 29, 31];
-        // 64 = 2^6, 81 = 3^4, 125 = 5^3, 343 = 7^3, 1331 = 11^3, 2197 = 13^3
+        let extended: Vec<u64> = vec![64, 81, 125, 343, 1331, 2197, 4913, 6859];
+        // 64 = 2^6, 81 = 3^4, 125 = 5^3, 343 = 7^3,
+        // 1331 = 11^3, 2197 = 13^3, 4913 = 17^3, 6859 = 19^3.
         let m_ext: i128 = extended.iter().map(|&p| p as i128).product();
-        println!("Extended power basis: {:?}", extended);
+        println!("Safe-base power tower: {:?}", extended);
         println!("M_extended = {}", m_ext);
         println!();
 
@@ -1784,8 +1797,8 @@ mod tests {
         // Test each basis configuration
         for (label, basis) in [
             ("Safe primes only (M=9.7M)", vec![2u64,3,5,7,11,13,17,19]),
-            ("Prime powers (M=180M)", powers_basis.clone()),
-            ("Extended (M=4e10)", extended.clone()),
+            ("Safe-base prime powers", powers_basis.clone()),
+            ("Safe-base power tower", extended.clone()),
         ] {
             // Verify pairwise coprime
             let mut coprime = true;
@@ -1824,16 +1837,22 @@ mod tests {
                 m);
         }
 
-        // Now the actual extension: append composites of safe basis to enlarge M
+        // Now the actual extension: increase safe-base powers to enlarge M.
         println!();
-        println!("Composite extension chain (each step adds a coprime modulus):");
-        let chain: Vec<u64> = vec![2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53];
-        let mut m_chain: i128 = 1;
-        let mut prev_correct = 0;
-        let mut prev_total = 0;
-        for k in 1..=chain.len() {
-            let basis: Vec<u64> = chain[..k].to_vec();
-            m_chain = basis.iter().map(|&p| p as i128).product();
+        println!("Prime-power extension chain (one coprime safe-base modulus per factor):");
+        let chain: Vec<Vec<u64>> = vec![
+            vec![2,3,5,7,11,13,17],
+            vec![2,3,5,7,11,13,17,19],
+            vec![4,3,5,7,11,13,17,19],
+            vec![8,9,5,7,11,13,17,19],
+            vec![16,9,25,7,11,13,17,19],
+            vec![32,27,25,49,11,13,17,19],
+            vec![32,27,25,49,121,169,17,19],
+            vec![32,27,25,49,121,169,289,361],
+            vec![64,81,125,343,1331,2197,4913,6859],
+        ];
+        for (k, basis) in chain.iter().enumerate() {
+            let m_chain: i128 = basis.iter().map(|&p| p as i128).product();
             let half = m_chain / 2;
             let mut correct = 0; let mut total = 0;
             for &(_amp, ip) in &all_ips {
@@ -1846,14 +1865,15 @@ mod tests {
                 if pred == actual { correct += 1; }
             }
             let safe = m_chain > 2 * max_abs;
-            println!("  k={:>2} (last={:>2}): M={:>20}, {}/{} correct, M>2|ip|? {}",
-                k, basis[k-1], m_chain, correct, total, safe);
-            prev_correct = correct; prev_total = total;
+            println!("  layer={:>2}: M={:>24}, {}/{} correct, M>2|ip|? {}",
+                k + 1, m_chain, correct, total, safe);
         }
 
         println!();
         println!("CONCLUSION:");
         println!("Phase-lock holds. The basis must be sized so M > 2*max|signed_ip|");
+        println!("The added capacity comes from safe-base prime powers/composite carriers.");
+        println!("510510 is a good safe-base carrier; 11 remains the phase-lock spine.");
         println!("over the evolution range. Once that condition holds, the centered");
         println!("residue gives 100% sign prediction. The previous 'mixed classes'");
         println!("were under-determined reads — basis too small for the dynamic range.");
@@ -1945,7 +1965,7 @@ mod tests {
         println!("dt = 1/{}, nu = {}", dt_den, nu_num);
         println!();
 
-        let basis: Vec<u64> = vec![32, 27, 25, 49, 121, 169, 17, 19, 23, 29, 31, 37, 41, 43];
+        let basis: Vec<u64> = vec![64, 81, 125, 343, 1331, 2197, 4913, 6859];
         let m: i128 = basis.iter().map(|&p| p as i128).product();
         println!("Basis modulus M = {} (~{:.2e})", m, m as f64);
         println!();
@@ -2080,7 +2100,7 @@ mod tests {
         println!();
 
         let amp: i64 = 50;  // larger amp so changes are bigger
-        let basis: Vec<u64> = vec![32, 27, 25, 49, 121, 169, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53];
+        let basis: Vec<u64> = vec![64, 81, 125, 343, 1331, 2197, 4913, 6859];
         let m: i128 = basis.iter().map(|&p| p as i128).product();
         let half = m / 2;
 
@@ -2165,7 +2185,7 @@ mod tests {
         let dt_num: i128 = 1;
         let dt_den: i128 = 10000;
 
-        let basis: Vec<u64> = vec![32, 27, 25, 49, 121, 169, 17, 19, 23, 29, 31, 37, 41, 43];
+        let basis: Vec<u64> = vec![64, 81, 125, 343, 1331, 2197, 4913, 6859];
         let m: i128 = basis.iter().map(|&p| p as i128).product();
         let half = m / 2;
 

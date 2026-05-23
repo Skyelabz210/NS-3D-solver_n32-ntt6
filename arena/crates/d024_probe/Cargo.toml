@@ -50,3 +50,7 @@ path = "src/bin/wassan_p10.rs"
 [[bin]]
 name = "corridor_probe_v3"
 path = "src/bin/corridor_probe_v3.rs"
+
+[[bin]]
+name = "v4_vs_i128_ref"
+path = "src/bin/v4_vs_i128_ref.rs"

@@ -47,7 +47,9 @@ Result: CRT consistency = 0 mismatches, max_diff = 0
 
 **What this proves:** The previous P5B-3 failure was a BUG (incorrect small lane population in ExtRes8), not a mathematical impossibility. Per-prime NTT spectral computation in Z/1409Z and Z/1601Z correctly produces `V mod p₅` and `V mod p₆` where V is the true integer raw velocity. Garner6 reconstructs V correctly.
 
-**What this enables:** P5B-9A is implementable. The 6-prime spectral computation will widen the Biot-Savart wall from M_NTT_4/2 ≈ 5×10^11 to M_NTT_6/2 ≈ 1.13×10^18.
+**What this enables:** P5B-9A is implementable for the small-prime NTT6 basis. The 6-prime spectral computation widens the Biot-Savart wall from M_NTT_4/2 ≈ 5×10^11 to M_NTT_6/2 ≈ 1.13×10^18.
+
+**Maintenance note (Push 10 v4):** TG amp=1000 reaches state magnitude ~1.3×10^20 by step 15, and the u128 verifier shows the next failure is the Biot-Savart spectral corridor. The small `{1409,1601}` extension is not enough for that regime. The next widening must stay CRAM-safe: preserve 11 as the shadow link, 2 as recumbent overflow, 13 as stable boundary, and 19 as edge-of-chaos; use composites and prime powers such as `3*5*7` or `7*p^k` when their roles are explicit. Higher/chaos-regime primes may appear only behind a composite layer, with K-Elim on the winding number used to identify the unique object even when residue views look identical.
 
 ---
 

@@ -20,7 +20,9 @@
 //!    construction; they are not part of the chimera's domain.
 //! 4. **2D, not 3D.** Reverse gears collapse (V10-T16). A step parameter
 //!    is `(p, q)` with `p` from the discriminating set `{7, 11, 13}` and
-//!    `q` from the external set `{17, 19, 23, 29, 31, 41, 43, 47}`.
+//!    `q` from the probe set `{17, 19, 23, 29, 31, 41, 43, 47}`. The
+//!    stable base runs through 19; larger capacity belongs in a composite
+//!    or prime-power layer phase-locked through 11.
 //!
 //! The "account for the arrow" requirement says: the StepChimera as
 //! algebra is correct but must be wrapped in a structure that enforces the
@@ -57,19 +59,20 @@ use crate::step_chimera::{StepChimera, StepLane, mod_pow, multiplicative_order};
 /// Discriminating prime set per V10 / safe-basis convention.
 pub const DISC_PRIMES: [u64; 3] = [7, 11, 13];
 
-/// External prime set per V10 (gears extend beyond discriminating set).
+/// Probe prime set per V10. Values above 19 are gear probes, not a raw
+/// replacement for the safe-base composite/prime-power layer.
 pub const EXT_PRIMES: [u64; 8] = [17, 19, 23, 29, 31, 41, 43, 47];
 
 /// The shadow prime — the gate's pivot.
 pub const SHADOW_PRIME: u64 = 11;
 
 /// A V10-style 2D gear specification: a discriminating prime `p` from
-/// `DISC_PRIMES` paired with an external prime `q` from `EXT_PRIMES`.
+/// `DISC_PRIMES` paired with a probe prime `q` from `EXT_PRIMES`.
 /// Forward-only by construction (per V10-T16).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Gear {
     pub p: u64,  // discriminating prime
-    pub q: u64,  // external prime
+    pub q: u64,  // probe prime; higher capacity is layered via composites/powers
 }
 
 impl Gear {
@@ -80,7 +83,7 @@ impl Gear {
             "Gear: discriminating prime {} not in DISC_PRIMES = {:?}",
             p, DISC_PRIMES);
         assert!(EXT_PRIMES.contains(&q),
-            "Gear: external prime {} not in EXT_PRIMES = {:?}",
+            "Gear: probe prime {} not in EXT_PRIMES = {:?}",
             q, EXT_PRIMES);
         Self { p, q }
     }

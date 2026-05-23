@@ -13,3 +13,5 @@ pub mod sqr_bootstrap;
 pub mod h2_closure;
 pub mod step_chimera;
 pub mod step_chimera_arrow;
+pub mod seam1_canonical_sweep;
+

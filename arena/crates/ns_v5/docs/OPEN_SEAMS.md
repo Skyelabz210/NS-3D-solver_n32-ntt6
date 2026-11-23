@@ -145,3 +145,5 @@ The following are CLOSED and should not appear in any "open problems" list:
 | Aubin-Lions conditions | DISCRETE_THEOREM | Both (i) and (ii) verified at N=8 |
 | Recumbent stability | DISCRETE_THEOREM | 0% overflow at amp=1000 |
 | Campaign: all solutions decay | CODE_FACT | 21 runs, 7 amplitudes, 3 seeds |
+
+The [opt-in integer centered inverse](N32_CENTERED_INVERSE.md) supplies a separate checked spatial operator with a signed range and an exact curl/divergence witness. A refining solver must preserve its input range across time steps.

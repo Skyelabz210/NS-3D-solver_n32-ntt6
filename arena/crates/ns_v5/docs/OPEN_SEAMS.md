@@ -1,6 +1,8 @@
 # OPEN_SEAMS.md — Remaining Open Problems
 # Precise statements, current evidence, and closure paths
 
+The [N32 arithmetic audit](N32_ARITHMETIC_BOUND.md) gives the production step's range and rounding bounds. Its period-four example identifies a velocity reconstruction gap before any continuum transfer. The exact skew cancellation applies to the unrounded advection stencil. The rounded production operator also has a signed remainder term.
+
 This document lists every problem that is NOT solved by the current workspace.
 Each entry states what is known, what is missing, and what would close it.
 
@@ -43,9 +45,8 @@ which satisfies BKM (Item 21) and yields regularity.
 established at finite N transfer to the continuum limit as N -> infinity.
 
 **What we know:**
-- Aubin-Lions condition (i): H^1 bound is uniform in N because Kill #113
-  eliminates the advection contribution EXACTLY (no N-dependent Gronwall
-  constant). The bound is ||u_0||^2_{L^2} / (2*nu), independent of N.
+- Unrounded skew advection has zero work. Applying that cancellation to the
+  rounded production step requires a bound on the signed remainder work.
 - Aubin-Lions condition (ii): Time-derivative proxy is finite at N=8.
 - Sobolev embedding: C_phys(N) = C(N)/N is monotonically decreasing and
   bounded (verified numerically for N = 4, 8, 16, 32, 64). The discrete
@@ -62,7 +63,9 @@ established at finite N transfer to the continuum limit as N -> infinity.
 
 **Partial closure:**
 The Sobolev component of this gap is numerically closed (C_phys(N) bounded).
-The energy component is algebraically closed (Kill #113 is unconditional).
+The unrounded advection cancellation is algebraic. A uniform energy estimate
+for the rounded production path also requires control of rounding and the
+velocity reconstruction.
 The time-derivative component requires N=16 verification.
 The nonlinear passage remains standard PDE theory, not computational.
 

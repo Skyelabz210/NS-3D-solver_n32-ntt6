@@ -105,6 +105,9 @@ version = "3.0.0"
 [[package]]
 name = "qcid_ns_bridge"
 version = "0.1.0"
+dependencies = [
+ "ns_regularity",
+]
 
 [[package]]
 name = "qedde_v2"

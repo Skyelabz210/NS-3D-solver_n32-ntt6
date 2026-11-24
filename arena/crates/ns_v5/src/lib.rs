@@ -693,4 +693,6 @@ pub mod ns3d_aubin_lions;
 pub mod ns3d_n32_ntt6;
 pub mod cram_div_ext;
 pub mod ns3d_n32_crt_v4;  // u128 substrate solver with widened 2^63 / 5^25 lanes
+pub mod ns3d_n32_roundoff;
+pub mod ns3d_n32_centered_inverse;
 pub mod assault_witness;

@@ -338,6 +338,8 @@ pub fn discrete_advection_skew(u: &Vel3D, wl: &Field3D) -> Field3D {
     out
 }
 
+/// Pair vorticity with the rounded skew-advection operator using integer arithmetic.
+/// The unrounded skew stencil cancels, while its division remainders can leave work.
 pub fn energy_residual_exact(u: &Vel3D, w: &Vort3D) -> i128 {
     let ax = discrete_advection_skew(u, &w.wx);
     let ay = discrete_advection_skew(u, &w.wy);
